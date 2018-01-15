@@ -7,25 +7,24 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-void debug(QNetworkReply *reply)
+#include "download.h"
+
+void debugData(QVariant data)
 {
-    auto data = reply->readAll();
-    auto document = QJsonDocument::fromJson(data);
-    auto array = document.array();
-    auto variant = array.toVariantList();
-    qDebug() << variant;
+    qDebug() << data;
 }
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    auto manager = new QNetworkAccessManager(qApp);
-    QObject::connect(manager,&QNetworkAccessManager::finished,debug);
 
-    auto url = QUrl("https://api.coinmarketcap.com/v1/ticker/bitcoin/?convert=PLN");
-    auto request = QNetworkRequest(url);
-    manager->get(request);
+    auto manager = new QNetworkAccessManager(qApp);
+    auto downloader = new Download(manager,qApp);
+    QObject::connect(downloader,&Download::downloadedData,debugData);
+
+    downloader->downloadFromUrl("https://api.coinmarketcap.com/v1/ticker/bitcoin/?convert=PLN");
+    downloader->downloadFromUrl("https://bitbay.net/API/Public/BTCPLN/all.json");
 
     return a.exec();
 }
