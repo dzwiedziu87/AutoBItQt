@@ -1,6 +1,8 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
+QT += network
+
 HEADERS += \
     $$PWD/download.h
 
